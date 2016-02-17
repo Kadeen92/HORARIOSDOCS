@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Atenciones as Atenciones;
+class AtencionesController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        //
+        $atenciones = new Atenciones;
+		$parametros['ruta'] 				= ['route' => 'atenciones.store'];
+		$parametros['metodo'] 				= 'POST';
+		$parametros['solicitud'] 		=  '';
+		$parametros['efectuado_por'] 	=  '';
+		$parametros['lugar'] 			=  '';
+		$parametros['idestado'] 		=  '';
+		$parametros['idtiposol'] 	    =  '';
+		$parametros['atendido_por'] 		=  '';
+		$parametros['comentarios'] 	    =  '';
+		//lamamos al form de registro personas
+		return view('atenciones')->with('parametros', $parametros)->with('atenciones', $atenciones);  
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $atenciones = new Atenciones;
+		
+		$atenciones->idestado 		= $request->input('idestado');
+		$atenciones->atendido_por 		= $request->input('atendido_por');
+		$atenciones->comentarios 	= $request->input('comentarios');
+		$atenciones->save();
+		return redirect()->back();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+        
+        
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        
+        $atenciones = Atenciones::find($id);
+		$parametros['ruta'] 		 	= ['route' => ['atenciones.update', $id], 'method' => 'patch'];
+		
+		$parametros['idestado']  		= $atenciones->idestado;
+		
+		$parametros['atendido_por']  		= $atenciones->atendido_por;
+		$parametros['comentarios']  	    = $atenciones->comentarios;
+		
+		//return 'entre al edit';
+		return view('atenciones')->with('parametros', $parametros)->with('atenciones', $atenciones);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request, $id)
+    {
+       // return 'entre al update';
+        $atenciones = Atenciones::find($id);
+		
+		$atenciones->idestado 			= $request->input('idestado');
+		
+		$atenciones->atendido_por 			= $request->input('atendido_por');
+		$atenciones->comentarios 		= $request->input('comentarios');
+		
+		$atenciones->save();
+		
+		return redirect()->back();
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+        Atenciones::destroy($id);
+		return \Redirect::route('atenciones.index');
+    }
+}

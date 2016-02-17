@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Carrera as Carrera;
+
+class CarreraController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $carrera = new Carrera;
+        $parametros['ruta'] 				= route('carrera.store');
+		$parametros['metodo'] 				= 'POST';
+		$parametros['carrera'] 				= '';
+		$parametros['codcarrera'] 				= '';
+		$parametros['idfacultad'] 				= '';
+		// llama al for del mantenimiento de roles
+        return view('carrera')->with('parametros', $parametros)->with('carrera', $carrera);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+        
+     }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        //
+        $carrera = new Carrera;
+		$carrera ->carrera 			= $request->input('carrera');
+		$carrera ->codcarrera 			= $request->input('codcarrera');
+		$carrera ->idfacultad 			= $request->input('idfacultad');
+		$tipop ->save();
+		return redirect()->back();
+        
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+		
+    
+    
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit(Request $request,$id)
+    {
+        //
+        $carrera = Carrera::find($id);
+        $parametros['ruta'] 		 	= ['route' => ['carrera.update', $id], 'method' => 'patch'];
+		$parametros['carrera'] 		 	= $carrera->carrera;
+		$parametros['codcarrera'] 		 	= $carrera->codcarrera;
+		$parametros['idfacultad'] 		 	= $carrera->idfacultad;
+		
+        return view('carrera')->with('parametros', $parametros)->with('carrera',$carrera);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request,$id)
+    {
+        //
+		$tipop = Tipop::find($id);
+		$tipop->tipo 			= $request->input('tipo');
+		$tipop->save();
+		return redirect()->back();  
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+        Tipop::destroy($id);
+		return redirect()->back();
+    }
+}

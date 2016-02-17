@@ -1,0 +1,133 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Salones as Salones;
+
+class SalonesController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        //
+        $salones = new Salones;
+		$parametros['ruta'] 				= ['route' => 'salones.store'];
+		$parametros['metodo'] 				= 'POST';
+		$parametros['salon'] 		=  '';
+		$parametros['idfacultad'] 			=  '';
+		
+		if($request->input('salon1') != ""){
+			$salon = Salones::salon($request->get('salon1'))->paginate(10);
+		}
+		else{
+			$salon = Salones::paginate(10);
+		}
+		
+		return view('salones', compact('salon'))->with('parametros', $parametros)->with('salones', $salones);  
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $salones = new Salones;
+		
+		$salones->salon 		= $request->input('salon');
+		$salones->idfacultad 	= $request->input('idfacultad');
+		$salones->save();
+		return redirect()->back();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+        
+        
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        
+        $salones = Salones::find($id);
+        $salon = Salones::find($id)->paginate(10);
+		$parametros['ruta'] 		 	= ['route' => ['salones.update', $id], 'method' => 'patch'];
+		
+		$parametros['salon']  		= $salones->salon;
+		$parametros['idfacultad']  	    = $salones->idfacultad;
+		$parametros['inactivo']  	    = $salones->inactivo;
+		
+		//return 'entre al edit';
+		return view('salones', compact('salon'))->with('parametros', $parametros)->with('salones', $salones);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request, $id)
+    {
+       // return 'entre al update';
+        $salones = Salones::find($id);
+		
+		if($request->input('inactivo') <> $salones->inactivo){
+        	$salones->inactivo      = $request->input('inactivo');
+        }else{
+			$salones->salon			= $request->input('salon');
+			$salones->idfacultad 	= $request->input('idfacultad');
+			$salones->inactivo		= $request->input('inactivo');
+		}
+		
+		$salones->save();
+		
+		return \Redirect::route('salones.index');
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+        Salones::destroy($id);
+		return \Redirect::route('salones.index');
+    }
+}

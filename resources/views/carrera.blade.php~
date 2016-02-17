@@ -1,0 +1,82 @@
+@extends('app')
+
+@section('content')
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-heading strong">Carreras</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+					
+					
+						{{--{!! Form::open($carrera, $parametros['ruta']) !!}--}}
+						
+						{{!!Form::open($carrera, $parametros['ruta'])!!}}
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">CARRERA</label>
+							<div class="col-md-6">
+								{!! Form::text('carrera', null, array('class' => 'form-control', 'placeholder' => 'Carrera')) !!}
+							</div>
+						</div>	
+						<br><br>
+						<div class="form-group">
+							<label class="col-md-4 control-label">CÓDIGO DE CARRERA</label>
+							<div class="col-md-6">
+								{!! Form::text('codcarrera', null, array('class' => 'form-control', 'placeholder' => 'Código de la Carrera')) !!}
+							</div>
+						</div>	
+						<br><br>
+						<div class="form-group">
+							<label class="col-md-4 control-label">FACULTAD</label>
+							<div class="col-md-6">
+								{!! Form::select('idfacultad', App\Facultad::lists('facultad', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>
+						<br><br>
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="submit" class="btn btn-primary">
+											REGISTRAR
+								</button>
+							</div>
+						</div>
+						{!! Form::close() !!}
+					</div>
+				<div class="table-responsive">
+				<br><br>
+					<h4 class="text-center">Lista de Carreras</h4>
+					
+					<table class="table2">
+						<tr class="strong text-center bg-info tr2"><td>CARRERA</td><td>CÓDIGO</td><td>FACULTAD</td><td>EDITAR</td><td>ELIMINAR</td>
+						</tr>
+							@foreach(App\Carrera::all() as $carrera)
+							<tr class="text-center tr2"><td>{{$carrera->carrera}}</td><td>{{$carrera->codcarrera}}</td>
+							<td>{{$fac = DB::table('facultades')->where('id', $carrera->idfacultad)->pluck('facultad')}}</td>
+							
+							<td>{!! Form::open(['method' => 'GET','route' => ['carrera.edit', $carrera->id]]) !!}
+								{!! Form::submit('Editar', ['class' => 'btn btn-warning']) !!}
+								{!! Form::close() !!}</td>
+							<td>{!! Form::open(['method' => 'DELETE','route' => ['carrera.destroy', $carrera->id]]) !!}
+								{!! Form::submit('Eliminar', ['class' => 'btn btn-danger']) !!}
+								{!! Form::close() !!}</td>
+							</tr>	 
+							@endforeach
+					</table>	
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

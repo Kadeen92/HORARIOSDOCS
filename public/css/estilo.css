@@ -1,0 +1,60 @@
+/*CSS PARA EL FOOTER*/
+html,body, #wrap{
+  height: 100%; /*permite que tome el 100% de la pantalla*/
+}
+body > #wrap{height: auto; min-height: 100%;} /*mantiene como minimo el 100% de alto de la pantalla*/
+#main{padding-bottom:50px; } /*Este padding sera el margen negativo y la altura del footer*/
+#footer{
+  position: relative;
+  margin-top: -50px; /*tomando valor negativo del padding del main*/
+  height: 50px; /*altura igual que el padding para el footer*/
+  clear:both;
+  /*colores y diseno al footer*/
+  background: #d9edf7;
+  -webkit-box-shadow: 0 0 5px 0 #d9edf7;
+  -moz-box-shadow: 0 0 5px 0 #d9edf7;
+  box-shadow: 0 0 5px 0 #d9edf7;
+  font-size: 15px;
+  font-weight: bold;
+  padding-left:10px;
+  padding-top: 15px;
+  text-align: center;
+}
+/*clase que elimina elementos flotantes*/
+.clearf{
+  content: " ";
+  display: block;
+  height: 0;
+  clear: both;
+}
+.clearf{display: inline-block;}
+html .clearf{height: 1%;}
+.clearf{display: block;}
+/*Fin de la clase para el FOOTER*/
+
+
+
+/*css para un modal*/
+.center {
+    margin-top:50px;   
+}
+
+.modal-header {
+	padding-bottom: 5px;
+}
+
+.modal-footer {
+    	padding: 0;
+	}
+    
+.modal-footer .btn-group button {
+	height:40px;
+	border-top-left-radius : 0;
+	border-top-right-radius : 0;
+	border: none;
+	border-right: 1px solid #ddd;
+}
+	
+.modal-footer .btn-group:last-child > button {
+	border-right: 0;
+}

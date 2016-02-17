@@ -1,0 +1,72 @@
+@extends('app')
+
+@section('content')
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-heading">Registro de Paises</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+					
+					{{--INICIA EL FORMULARIO--}}
+					
+					{!! Form::model($pais, $parametros['ruta']) !!}
+					
+						<div class="form-group">
+							<label class="col-md-4 control-label">PAÍS</label>
+							<div class="col-md-6">
+								{!! Form::text('pais', null, array('class' => 'form-control', 'placeholder' => 'País')) !!}
+							</div>
+						</div>			
+							
+						<div class="form-group">
+							<label class="col-md-4 control-label">CÓDIGO ISO</label>
+							<div class="col-md-6">
+								{!! Form::text('isocodigo', null, array('class' => 'form-control', 'placeholder' => 'Código ISO')) !!}
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="submit" class="btn btn-primary">
+									REGISTRAR
+								</button>
+								<br>
+							</div>
+						</div>
+					{!! Form::close() !!}
+					
+					</div>
+					<br><br>
+					<h4 class="text-center">Lista de Paises</h4>
+					{{--TABLA QUE AGRUPA A LOS PAISES ALMACENADOS PARA PODER EDITARLOS O ELIMINARLOS--}}
+					<table class="table2">
+						<tr class="strong text-center bg-info tr2"><td>PAÍS</td><td>COD. ISO</td><td>EDITAR</td><td>ELIMINAR</td>
+						</tr>
+						@foreach(App\Paist::all() as $paist)
+						<tr class="text-center tr2"><td>{{$paist->pais}}</td><td>{{$paist->isocodigo}}</td>
+						<td>{!! Form::open(['method' => 'GET','route' => ['pais.edit', $paist->id]]) !!}
+							{!! Form::submit('Editar', ['class' => 'btn btn-warning']) !!}
+							{!! Form::close() !!}</td>
+						<td>{!! Form::open(['method' => 'DELETE','route' => ['pais.destroy', $paist->id]]) !!}
+							{!! Form::submit('Eliminar', ['class' => 'btn btn-danger']) !!}
+							{!! Form::close() !!}</td>
+					</tr>	 
+				@endforeach
+				</table>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

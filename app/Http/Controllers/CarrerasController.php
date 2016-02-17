@@ -1,0 +1,148 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Carreras as Carreras;
+
+class CarrerasController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        //
+        $carreras = new Carreras;
+		$parametros['ruta'] 				= ['route' => 'carreras.store'];
+		$parametros['metodo'] 				= 'POST';
+		$parametros['carrera'] 		=  '';
+		$parametros['codcarrera'] 	=  '';
+		$parametros['idfacultad'] 			=  '';
+		$parametros['idfac'] 			=  '';
+		
+			if($request->input('carrera1') != ""){
+				$carrera = Carreras::carrera($request->get('carrera1'))->orderby('idfacultad','asc')->paginate(25);
+			}
+			else{
+				$carrera = Carreras::orderby('idfacultad','asc')->paginate(25);
+			}
+		
+		
+		
+		return view('carreras', compact('carrera'))->with('parametros', $parametros)->with('carreras', $carreras);  
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $carreras = new Carreras;
+		
+		$carreras->carrera 		= $request->input('carrera');
+		$carreras->codcarrera 	= $request->input('codcarrera');
+		$carreras->idfacultad 	= $request->input('idfacultad');
+		$carreras->save();
+		return redirect()->back();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+        
+        
+    }
+    
+    public function filter()
+    {
+        //
+        $parametros['idfacultad'] 			=  '';
+        return view('carreras')->with('parametros', $parametros);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        
+        $carreras = Carreras::find($id);
+        
+        $carrera = Carreras::find($id)->orderby('idfacultad','asc')->paginate(25);
+		$parametros['ruta'] 		 	= ['route' => ['carreras.update', $id], 'method' => 'patch'];
+		
+		$parametros['carrera']  		= $carreras->carrera;
+		
+		$parametros['codcarrera']  		= $carreras->codcarrera;
+		$parametros['idfacultad']  	    = $carreras->idfacultad;
+		$parametros['inactivo']  	    = $carreras->inactivo;
+		
+		//return 'entre al edit';
+		return view('carreras', compact('carrera'))->with('parametros', $parametros)->with('carreras', $carreras);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request, $id)
+    {
+       // return 'entre al update';
+        $carreras = Carreras::find($id);
+		
+		if($request->input('inactivo') <> $carreras->inactivo){
+        	$carreras->inactivo         = $request->input('inactivo');
+        }else{
+			$carreras->carrera			= $request->input('carrera');
+			$carreras->codcarrera 		= $request->input('codcarrera');
+			$carreras->idfacultad 		= $request->input('idfacultad');
+			$carreras->inactivo 		= $request->input('inactivo');
+		}
+		$carreras->save();
+		
+		return \Redirect::route('carreras.index');
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+        Carreras::destroy($id);
+		return \Redirect::route('carreras.index');
+    }
+}

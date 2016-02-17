@@ -1,0 +1,158 @@
+@extends('app')
+
+@section('content')
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-heading">Registro</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+					
+					
+					{!! Form::model($persona, $parametros['ruta']) !!}
+					
+						<div class="form-group">
+							<label class="col-md-4 control-label">NOMBRE</label>
+							<div class="col-md-6">
+								{!! Form::text('nombre', null, array('class' => 'form-control', 'placeholder' => 'Nombre')) !!}
+							</div>
+						</div>			
+							
+						<div class="form-group">
+							<label class="col-md-4 control-label">APELLIDO</label>
+							<div class="col-md-6">
+								{!! Form::text('apellido', null, array('class' => 'form-control', 'placeholder' => 'Apellido')) !!}
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">CEDULA</label>
+							<div class="col-md-6">
+								{!! Form::text('cedula', null, array('class' => 'form-control', 'placeholder' => 'Cedula')) !!}
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">FECHA DE NACIMIENTO </label>
+							<div class="col-md-6">
+								{!! Form::text('fecha_nac', null, array('class' => 'form-control', 'placeholder' => 'dd/mm/aa')) !!}
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">TELEFONO DEL DEPARTAMENTO</label>
+							<div class="col-md-6">
+								{!! Form::text('telefono_dep', null, array('class' => 'form-control', 'placeholder' => 'Telefono Departamento')) !!}
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">CELULAR</label>
+							<div class="col-md-6">
+								{!! Form::text('celular', null, array('class' => 'form-control', 'placeholder' => 'Celular')) !!}
+							</div>
+						</div>
+	
+						<div class="form-group">
+							<label class="col-md-4 control-label">PAISES</label>
+							<div class="col-md-6">
+								{!! Form::select('idpais', App\Paist::lists('pais', 'id'), null, array('class' => 'form-control')) !!}
+						
+							</div>
+						</div>
+						
+						
+						
+						
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">SEDES</label>
+							<div class="col-md-6">
+								{!! Form::select('idsede', App\Sede::lists('sedep', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>
+						
+						
+						
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">ROLES</label>
+							<div class="col-md-6">
+								{!! Form::select('idrol', App\Rol::lists('rolc', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">DEPARTAMENTO</label>
+							<div class="col-md-6">
+								{!! Form::select('iddepartamento', App\Departamento::lists('departamento', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">ESPECIALIDAD</label>
+							<div class="col-md-6">
+								{!! Form::select('idespecialidad', App\Especialidad::lists('espicialidad', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="submit" class="btn btn-primary">
+									REGISTRAR
+								</button>
+								<br>
+							</div>
+						</div>
+					{!! Form::close() !!}
+					
+					
+					
+					
+				</div>
+				<br><br>
+					<h4 class="text-center">Lista de Personas</h4>
+					{{--TABLA QUE AGRUPA A LAS PERSONAS ALMACENADAS PARA PODER EDITARLAS O ELIMINARLAS--}}
+					<table class="table2">
+						<tr class="strong text-center bg-info tr2"><td>NOMBRE</td><td>APELLIDO</td><td>CEDULA</td><td>FEC. NACIMIENTO</td><td>TE. DEPART.</td><td>CELULAR</td>
+							<td>PAIS</td><td>SEDE</td><td>ROL</td><td>DEPART.</td><td>ESPEC.</td>
+							<td>EDITAR</td><td>ELIMINAR</td>
+						</tr>
+						@foreach(App\Persona::all() as $persona)
+						<tr class="text-center tr2"><td>{{$persona->nombre}}</td><td>{{$persona->apellido}}</td><td>{{$persona->cedula}}</td><td>{{$persona->fecha_nac}}</td>
+							<td>{{$persona->telefono_dep}}</td><td>{{$persona->celular}}</td>
+							<td>{{$pais = DB::table('paises')->where('id', $persona->idpais)->pluck('pais')}}</td>
+							<td>{{$sede = DB::table('sedes')->where('id', $persona->idsede)->pluck('sedep')}}</td>
+							<td>{{$rol = DB::table('roles')->where('id', $persona->idrol)->pluck('rolc')}}</td>
+							<td>{{$depar = DB::table('departamentos')->where('id', $persona->iddepartamento)->pluck('departamento')}}</td>
+							
+							<td>{{$esp = DB::table('especialidades')->where('id', $persona->idespecialidad)->pluck('espicialidad')}}</td>
+						<td>{!! Form::open(['method' => 'GET','route' => ['persona.edit', $persona->id]]) !!}
+							{!! Form::submit('Editar', ['class' => 'btn btn-warning']) !!}
+							{!! Form::close() !!}</td>
+						<td>{!! Form::open(['method' => 'DELETE','route' => ['persona.destroy', $persona->id]]) !!}
+							{!! Form::submit('Eliminar', ['class' => 'btn btn-danger']) !!}
+							{!! Form::close() !!}</td>
+					</tr>	 
+				@endforeach
+				</table>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

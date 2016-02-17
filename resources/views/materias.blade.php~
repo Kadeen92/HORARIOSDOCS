@@ -1,0 +1,216 @@
+@extends('app')
+
+@section('content')
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<div class="panel panel-default">
+			@if(Auth::user()->idrol == 1 or Auth::user()->idrol == 5)
+				<div class="panel-heading strong">Registro de Materias</div>
+			@else
+				<div class="panel-heading strong">Materias</div>
+			@endif
+					<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+					
+					
+					
+					@if(Auth::user()->idrol == 1 or Auth::user()->idrol == 5)
+					
+					{!! Form::model($materias, $parametros['ruta']) !!}
+					
+						<div class="form-group">
+							<label class="col-md-4 control-label">NUEVA MATERIA</label>
+							<div class="col-md-6">
+								{!! Form::text('materia', null, array('class' => 'form-control', 'placeholder' => 'Nueva Materia')) !!}
+							</div>
+						</div>		
+						
+						
+							<div class="form-group">
+							<label class="col-md-4 control-label">CODIGO</label>
+							<div class="col-md-6">
+								{!! Form::text('codigomateria', null, array('class' => 'form-control', 'placeholder' => 'Codigo de materia 0000')) !!}
+							</div>
+						</div>
+						
+						
+						<div class="form-group">
+							<label class="col-md-4 c-ontrol-label">FACULTAD</label>
+							<div class="col-md-6">
+								{!! Form::select('idfacultad', App\Facultad::lists('facultad', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>
+						
+							
+					<div class="form-group">
+							<label class="col-md-4 c-ontrol-label">TIPO DE MATERIA</label>
+							<div class="col-md-6">		
+								{!! Form::select('essubmateria', App\Essubmateria::lists('sub', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>
+								
+						
+					<div id="menu_materia">							
+						<div class="row">
+							<div class="col-md-9 col-md-offset-1">
+								<br>
+								<br>	
+								<div class="panel panel-default">
+									<div class="  panel-heading">Si la materia es una  “ submateria ”  seleccione la materia principal a la que pertenece </div>		
+										<div class="panel-body ">
+					
+												<div class="form-group">
+														<label class="col-md-4 control-label">PRINCIPAL</label>
+													<div class="col-md-6">
+															{!! Form::select('idmateriaprincipal', App\Materias::lists('materia', 'id'), null, array('class' => 'form-control')) !!}
+													</div>
+												</div>	
+					
+								</div>
+							</div>
+						</div>
+					</div>						
+						
+
+					
+					</div>
+						
+				
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">INACTIVO</label>
+							<div class="col-md-2">
+								
+									<input name="inactivo" type="checkbox" value="1">
+							</div>
+						</div>	
+							
+						
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="submit" class="btn btn-primary">
+											REGISTRAR
+								</button>
+							</div>
+						</div>
+					
+					
+					{!!Form::close()!!}
+				@endif
+					
+			</div>
+			
+			<br><br>
+			<h4 class="text-center">Lista de Materias</h4>
+			{{--TABLA QUE AGRUPA A LOS ROLES ALMACENADOS PARA PODER EDITARLOS O ELIMINARLOS--}}
+				<div class="table-responsive">
+					<table class="table2">
+						<tr class="strong text-center bg-info tr2"><td>MATERIA</td><td>CODIGO</td><td>FACULTADES</td>
+						@if(Auth::user()->idrol == 1)
+							<td>ESTADO</td><td>ACTIVAR-DESACTIVAR</td><td>EDITAR</td><td>ELIMINAR</td>
+						@endif
+						@if(Auth::user()->idrol == 5)
+							<td>ESTADO</td><td>ACTIVAR-DESACTIVAR</td><td>EDITAR</td>
+						@else
+						@endif
+						</tr>
+						@foreach(App\Materias::all() as $materias)
+							@if(Auth::user()->idrol == 1)
+								<tr class="text-center tr2"><td>{{$materias->materia}}</td>
+								<td>{{$materias->codigomateria}}</td>
+								<td>{{$facultad = DB::table('facultades')->where('id', $materias->idfacultad)->pluck('facultad')}}</td>
+								@if($materias->inactivo ==1)
+									<td class="text-success">ACTIVO</td>
+								@else
+									<td class="text-danger">INACTIVO</td>
+								@endif
+								<td>
+									@if($materias->inactivo == 1)
+										{!! Form::open(['method' => 'PATCH','route' => ['materias.update', $materias->id]]) !!}
+											{!! Form::hidden('materia', $materias->materia) !!}
+											{!! Form::hidden('codigomateria', $materias->codigomateria) !!}
+											{!! Form::hidden('essubmateria', $materias->essubmateria) !!}
+											{!! Form::hidden('idmateriaprincipal', $materias->idmateriaprincipal) !!}
+											{!! Form::hidden('idfacultad', $materias->idfacultad) !!}
+											{!! Form::hidden('inactivo', 0) !!}
+										{!! Form::submit('Desactivar', ['class' => 'btn btn-warning']) !!}
+									@endif
+									@if($materias->inactivo == 0)
+										{!! Form::open(['method' => 'PATCH','route' => ['materias.update', $materias->id]]) !!}
+											{!! Form::hidden('materia', $materias->materia) !!}
+											{!! Form::hidden('codigomateria', $materias->codigomateria) !!}
+											{!! Form::hidden('essubmateria', $materias->essubmateria) !!}
+											{!! Form::hidden('idmateriaprincipal', $materias->idmateriaprincipal) !!}
+											{!! Form::hidden('idfacultad', $materias->idfacultad) !!}
+											{!! Form::hidden('inactivo', 1) !!}
+										{!! Form::submit('Activar', ['class' => 'btn btn-success']) !!}
+									@endif
+								</td>							
+								<td>{!! Form::open(['method' => 'GET','route' => ['materias.edit', $materias->id]]) !!}
+									{!! Form::submit('Editar', ['class' => 'btn btn-primary']) !!}
+									{!! Form::close() !!}</td>
+								<td>{!! Form::open(['method' => 'DELETE','route' => ['materias.destroy', $materias->id]]) !!}
+									{!! Form::submit('Eliminar', ['class' => 'btn btn-danger']) !!}
+									{!! Form::close() !!}</td>
+								</tr>
+							@endif
+							@if(Auth::user()->idrol == 5)
+								<tr class="text-center tr2"><td>{{$materias->materia}}</td>
+								<td>{{$materias->codigomateria}}</td>
+								<td>{{$facultad = DB::table('facultades')->where('id', $materias->idfacultad)->pluck('facultad')}}</td>
+								@if($materias->inactivo ==1)
+									<td class="text-success">ACTIVO</td>
+								@else
+									<td class="text-danger">INACTIVO</td>
+								@endif
+								<td>
+									@if($materias->inactivo == 1)
+										{!! Form::open(['method' => 'PATCH','route' => ['materias.update', $materias->id]]) !!}
+											{!! Form::hidden('materia', $materias->materia) !!}
+											{!! Form::hidden('codigomateria', $materias->codigomateria) !!}
+											{!! Form::hidden('essubmateria', $materias->essubmateria) !!}
+											{!! Form::hidden('idmateriaprincipal', $materias->idmateriaprincipal) !!}
+											{!! Form::hidden('idfacultad', $materias->idfacultad) !!}
+											{!! Form::hidden('inactivo', 0) !!}
+										{!! Form::submit('Desactivar', ['class' => 'btn btn-warning']) !!}
+									@endif
+									@if($materias->inactivo == 0)
+										{!! Form::open(['method' => 'PATCH','route' => ['materias.update', $materias->id]]) !!}
+											{!! Form::hidden('materia', $materias->materia) !!}
+											{!! Form::hidden('codigomateria', $materias->codigomateria) !!}
+											{!! Form::hidden('essubmateria', $materias->essubmateria) !!}
+											{!! Form::hidden('idmateriaprincipal', $materias->idmateriaprincipal) !!}
+											{!! Form::hidden('idfacultad', $materias->idfacultad) !!}
+											{!! Form::hidden('inactivo', 1) !!}
+										{!! Form::submit('Activar', ['class' => 'btn btn-success']) !!}
+									@endif
+								</td>							
+								<td>{!! Form::open(['method' => 'GET','route' => ['materias.edit', $materias->id]]) !!}
+									{!! Form::submit('Editar', ['class' => 'btn btn-primary']) !!}
+									{!! Form::close() !!}</td>
+								</tr>
+							@endif
+							@if(Auth::user()->idrol == 4)
+								<tr class="text-center tr2"><td>{{$materias->materia}}</td>
+								<td>{{$materias->codigomateria}}</td>
+								<td>{{$facultad = DB::table('facultades')->where('id', $materias->idfacultad)->pluck('facultad')}}</td>
+								</tr>
+							@endif
+						@endforeach
+					</table>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

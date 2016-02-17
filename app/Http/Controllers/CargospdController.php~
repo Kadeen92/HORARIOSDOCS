@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Cargospd as Cargospd;
+
+class CargospdController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        //
+        $cargospd = new Cargospd;
+        $parametros['ruta'] 				= ['route' => 'cargospd.store'];
+		$parametros['metodo'] 				= 'POST';
+		$parametros['iduser'] 				=  '';
+		$parametros['idcargos'] 			=  '';
+		$parametros['inactivo'] 			=  '';
+		// llama al for del mantenimiento de roles
+        return view('cargospd')->with('parametros', $parametros)->with('cargospd', $cargospd);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        //
+			$cargospd = new Cargospd;
+			$cargospd->iduser			= $request->input('iduser');
+			$cargospd->idcargos			= $request->input('idcargos');
+			$cargospd->inactivo 		= $request->input('inactivo');
+			$cargospd->save();
+			return redirect()->back();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit(Request $request,$id)
+    {
+        //
+        $cargospd = Cargospd::find($id);
+        $parametros['ruta'] 		 				  = ['route'=>['cargospd.update', $id],'method'=>'patch'];
+		$parametros['iduser'] 						  = $cargospd->iduser;
+		$parametros['idcargos'] 					  = $cargospd->idcargos;
+		$parametros['inactivo'] 					  = $cargospd->inactivo;
+		return view('cargospd')->with('parametros', $parametros)->with('cargospd', $cargospd);
+		
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request,$id)
+    {
+        //
+        $cargospd = Cargospd::find($id);
+		
+		if($request->input('inactivo') <> $cargospd->inactivo){
+        		$cargospd->inactivo      = $request->input('inactivo');
+        }else{
+			$cargospd->iduser 			= $request->input('iduser');
+			$cargospd->idcargos 		= $request->input('idcargos');
+			$cargospd->inactivo         = $request->input('inactivo');
+		}
+		
+		$cargospd->save();
+		return \Redirect::route('cargospd.index');
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+	{
+		Cargospd::destroy($id);
+		return \Redirect::route('cargospd.index');
+	}
+		
+	 public function getCargospd(Request $request){
+		$id =  $request->input('user');
+		$solia = \DB::table('especialidadpd')
+							->join('cargos','cargos.id','=','especialidadpd.idcargos')
+							->where('especialidadpd.iduser','=', $id)
+							->select('cargos.cargo')
+							->get();						
+		return $solia;	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

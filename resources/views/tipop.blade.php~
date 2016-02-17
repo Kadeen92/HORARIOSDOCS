@@ -1,0 +1,88 @@
+@extends('app')
+
+@section('content')
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-heading strong">Tipos de Proyecto</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+					
+					{!! Form::model($carrera, $parametros['ruta']) !!}
+							
+						<div class="form-group">
+							<label class="col-md-4 control-label">TIPOS</label>
+							<div class="col-md-6">
+								{!! Form::text('carrera', null, array('class' => 'form-control', 'placeholder' => 'Carrera')) !!}
+							</div>
+						</div>	
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">TIPOS</label>
+							<div class="col-md-6">
+								{!! Form::text('codcarrera', null, array('class' => 'form-control', 'placeholder' => 'Código de la Carrera')) !!}
+							</div>
+						</div>	
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">TIPOS</label>
+							<div class="col-md-6">
+								{!! Form::select('idfacultad', App\Facultad::lists('facultad', 'id'), null, array('class' => 'form-control')) !!}
+							</div>
+						</div>			
+							
+							
+							<br>
+						
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="submit" class="btn btn-primary">
+											REGISTRAR
+								</button>
+						<br>
+						<br>
+							</div>
+						</div>
+					{!! Form::close() !!}
+				<div class="table-responsive">
+				<br><br>
+					<h4 class="text-center">Lista de Carreras</h4>
+					
+					<table class="table2">
+						<tr class="strong text-center bg-info tr2"><td>CARRERA</td><td>CÓDIGO</td><td>FACULTAD</td><<td>EDITAR</td><td>ELIMINAR</td>
+						</tr>
+						@foreach(App\Carrera::all() as $carrera)
+						<tr class="text-center tr2"><td>{{$carrera->carrera}}</td><td>{{$carrera->apellido}}</td><td>{{$user->cedula}}</td><td>{{$user->fecha_nac}}</td>
+							<td>{{$user->telefono}}</td><td>{{$user->celular}}</td>
+							<td>{{$pais = DB::table('paises')->where('id', $user->idpais)->pluck('pais')}}</td>
+							<td>{{$sede = DB::table('sedes')->where('id', $user->idsede)->pluck('sede')}}</td>
+							<td>{{$rol = DB::table('roles')->where('id', $user->idrol)->pluck('rol')}}</td>
+							<td>{{$depar = DB::table('departamentos')->where('id', $user->iddepartamento)->pluck('departamento')}}</td>
+							
+							<td>{{$esp = DB::table('especialidades')->where('id', $user->idespecialidad)->pluck('espicialidad')}}</td>
+						<td>{!! Form::open(['method' => 'GET','route' => ['user.edit', $user->id]]) !!}
+							{!! Form::submit('Editar', ['class' => 'btn btn-warning']) !!}
+							{!! Form::close() !!}</td>
+						<td>{!! Form::open(['method' => 'DELETE','route' => ['user.destroy', $user->id]]) !!}
+							{!! Form::submit('Eliminar', ['class' => 'btn btn-danger']) !!}
+							{!! Form::close() !!}</td>
+					</tr>	 
+				@endforeach
+				</table>	
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

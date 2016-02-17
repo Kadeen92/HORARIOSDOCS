@@ -1,0 +1,69 @@
+@extends('app')
+
+@section('content')
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-heading strong">Nueva Solicitud</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+									
+					{!! Form::model($solicitud, $parametros['ruta']) !!}
+					
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">SOLICITUD</label>
+							<div class="col-md-6">
+								{!! Form::textarea('solicitud', null, array('class' => 'form-control', 'placeholder' => 'solicitud')) !!}
+							</div>
+						</div>			
+							
+						<br><br>
+						{!! Form::hidden('efectuado-por', Auth::user()->id ) !!}<br><br>
+						{!! Form::hidden('idestado',1) !!}<br><br>
+						
+						<div class="form-group">
+							<label class="col-md-4 control-label">LUGAR</label>
+							<div class="col-md-6">
+								{!! Form::text('lugar', null, array('class' => 'form-control', 'placeholder' => 'facultad-salón-oficina-departamento')) !!}
+							</div>
+						</div>
+						
+						
+						<br><br>
+						<div class="form-group">
+							<label class="col-md-4 control-label">TIPO DE SOLICITUD</label>
+							<div class="col-md-6">
+								{!! Form::select('idtiposol', App\Tiposol::lists('tipo', 'id'), null, array('class' => 'form-control')) !!}
+						
+							</div>
+						</div>
+						
+						<br><br>
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="submit" class="btn btn-primary">
+									REGISTRAR
+								</button>
+								<br>
+							</div>
+						</div>
+					{!! Form::close() !!}
+				</div>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

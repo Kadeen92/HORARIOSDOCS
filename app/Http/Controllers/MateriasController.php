@@ -1,0 +1,138 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Materias as Materias;
+
+class MateriasController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        //
+        $materia = new Materias;
+		$parametros['ruta'] 				= ['route' => 'materias.store'];
+		$parametros['metodo'] 				= 'POST';
+		$parametros['materia'] 		=  '';
+		$parametros['codigomateria'] 			=  '';
+		$parametros['essubmateria'] 			=  '';
+		$parametros['inactivo'] 			=  '';
+		
+		if($request->input('mat1') != ""){
+			$mat = Materias::mat($request->get('mat1'))->paginate(25);
+		}
+		else{
+			$mat = Materias::paginate(25);
+		}
+		
+		return view('materias', compact('mat'))->with('parametros', $parametros)->with('materias', $materia);  
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $materia = new Materias;
+		
+		$materia->materia		= $request->input('materia');
+		$materia->codigomateria		= $request->input('codigomateria');
+		$materia->essubmateria		= $request->input('essubmateria');
+		$materia->inactivo		= $request->input('inactivo');
+		$materia->save();
+		return redirect()->back();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+        
+        
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        
+        $materia = Materias::find($id);
+        $mat = Materias::find($id)->paginate(25);
+		$parametros['ruta'] 		 	= ['route' => ['materias.update', $id], 'method' => 'patch'];
+		
+		$parametros['materia']  	= $materia->materia;
+		$parametros['codigomateria']  	= $materia->codigomateria;
+		$parametros['essubmateria']  	= $materia->essubmateria;
+		$parametros['inactivo']  	= $materia->inactivo;
+		
+		//return 'entre al edit';
+		return view('materias', compact('mat'))->with('parametros', $parametros)->with('materias', $materia);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request, $id)
+    {
+       // return 'entre al update';
+        $materia = Materias::find($id);
+		
+		if($request->input('inactivo') <> $materia->inactivo){
+        	$materia->inactivo      = $request->input('inactivo');
+        }else{
+			$materia->materia		= $request->input('materia');
+			$materia->codigomateria		= $request->input('codigomateria');
+			$materia->essubmateria		= $request->input('essubmateria');
+		}
+		
+		$materia->save();
+		
+		return \Redirect::route('materias.index');
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+        Materias::destroy($id);
+		return \Redirect::route('materias.index');
+    }
+}

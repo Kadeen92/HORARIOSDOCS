@@ -1,0 +1,19 @@
+@extends('app')
+
+@section('content')
+<div class="container">
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<div class="panel panel-default">
+				<div class=" panel-heading">Modulo en Construcción</div>
+				
+				<div class="panel-body ">
+					<center><img class="img-responsive" src="./img/en-construccion01.png">
+					<br><br><h3>Bienvenido a HORARIOS DOCENTES, {{ Auth::user()->nombre }}!!</h3></center>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

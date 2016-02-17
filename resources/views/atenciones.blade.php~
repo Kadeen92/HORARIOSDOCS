@@ -1,0 +1,106 @@
+@extends('app')
+
+@section('content')
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-heading strong">Atención de Solicitudes</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+					
+										<h4 class="text-center strong">Lista de Solicitudes Pendientes</h4>
+					
+					<table class="table2 bg-danger">
+						<tr class="strong text-center tr2"><td>SOLICITUD</td><td>ESTADO</td><td>SOLICITANTE</td><td>CARGO</td><td>FECHA</td><td>ATENDER</td>
+						</tr>
+						@foreach(App\Atenciones::all() as $atenciones)
+							@if($atenciones->idestado == 1)
+								<tr class="text-center tr2"><td>{{$atenciones->solicitud}}</td>
+									<td>{{$idestado = DB::table('statuss')->where('id', $atenciones->idestado)->pluck('estado')}}</td>
+									<td>{{$efectuado_por = DB::table('users')->where('id', $atenciones->efectuado_por)->pluck('nombre')}}</td>
+									<td>{{1}}</td>
+									<td>{{$atenciones->created_at}}</td>
+									<td>
+										{!! Form::open(['method' => 'PATCH','route' => ['atenciones.update', $atenciones->id]]) !!}
+										
+										
+											{!! Form::hidden('idestado', 2) !!}
+											{!! Form::hidden('atendido_por', Auth::user()->id) !!}
+										
+										
+										{!! Form::submit('Atender', ['class' => 'btn btn-primary']) !!}
+										{!! Form::close() !!}</td>
+								</tr>
+							@endif	 
+						@endforeach
+					</table>
+					<br><br><br>
+					<h4 class="text-center strong">Lista de Solicitudes en Proceso de Atención</h4>
+					
+					<table class="table2 bg-warning">
+						<tr class="strong text-center tr2"><td>SOLICITUD</td><td>ESTADO</td><td>SOLICITANTE</td><td>CARGO</td><td>FECHA</td>
+							<td>DIAGNOSTICO</td><td>Culminar</td>
+						</tr>
+						@foreach(App\Atenciones::all() as $atenciones)
+							@if($atenciones->idestado == 2 and Auth::user()->id == $atenciones->atendido_por)
+								<tr class="text-center tr2"><td>{{$atenciones->solicitud}}</td>
+									<td>{{$idestado = DB::table('statuss')->where('id', $atenciones->idestado)->pluck('estado')}}</td>
+									<td>{{$efectuado_por = DB::table('users')->where('id', $atenciones->efectuado_por)->pluck('nombre')}}</td>
+									<td>{{1}}</td>
+									<td>{{$atenciones->updated_at}}</td>
+									<td>
+										{!! Form::open(['method' => 'PATCH','route' => ['atenciones.update', $atenciones->id]]) !!}
+										{!! Form::text('comentarios', null, array('class' => 'form-control', 'placeholder' => 'diagnostico')) !!}
+									</td>
+									<td>
+										
+										
+											
+											{!! Form::hidden('idestado', 3) !!}
+											{!! Form::hidden('atendido_por', Auth::user()->id) !!}
+										
+										{!! Form::submit('Culminar', ['class' => 'btn btn-danger']) !!}
+										{!! Form::close() !!}</td>
+								</tr>
+							@endif	 
+						@endforeach
+					</table>
+					
+					<br><br><br>
+					<h4 class="text-center strong">Lista de Solicitudes Atendidas</h4>
+					
+					<table class="table2 bg-success">
+						<tr class="strong text-center tr2"><td>SOLICITUD</td><td>ESTADO</td><td>SOLICITANTE</td><td>CARGO</td><td>FECHA</td>
+							<td>DIAGNOSTICO</td>
+						</tr>
+						@foreach(App\Atenciones::all() as $atenciones)
+							@if($atenciones->idestado == 3 and Auth::user()->id == $atenciones->atendido_por)
+								<tr class="text-center tr2 text-muted"><td>{{$atenciones->solicitud}}</td>
+									<td>{{$idestado = DB::table('statuss')->where('id', $atenciones->idestado)->pluck('estado')}}</td>
+									<td>{{$efectuado_por = DB::table('users')->where('id', $atenciones->efectuado_por)->pluck('nombre')}}</td>
+									<td>{{1}}</td>
+									<td>{{$atenciones->updated_at}}</td>
+									<td>{{$atenciones->comentarios}}</td>
+								</tr>
+							@endif	 
+						@endforeach
+					</table>				
+					
+					
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@endsection

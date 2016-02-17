@@ -1,0 +1,133 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Laboratorios as Laboratorios;
+
+class LaboratoriosController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        //
+        $laboratorios = new Laboratorios;
+		$parametros['ruta'] 				= ['route' => 'laboratorios.store'];
+		$parametros['metodo'] 				= 'POST';
+		$parametros['laboratorio'] 		=  '';
+		$parametros['idfacultad'] 			=  '';
+		
+		if($request->input('lab1') != ""){
+			$lab = Laboratorios::lab($request->get('lab1'))->paginate(10);
+		}
+		else{
+			$lab = Laboratorios::paginate(10);
+		}
+		
+		return view('laboratorios', compact('lab'))->with('parametros', $parametros)->with('laboratorios', $laboratorios);  
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $laboratorios = new Laboratorios;
+		
+		$laboratorios->laboratorio		= $request->input('laboratorio');
+		$laboratorios->idfacultad 	= $request->input('idfacultad');
+		$laboratorios->save();
+		return redirect()->back();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+        
+        
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        
+        $laboratorios = Laboratorios::find($id);
+        $lab = Laboratorios::find($id)->paginate(10);
+		$parametros['ruta'] 		 	= ['route' => ['laboratorios.update', $id], 'method' => 'patch'];
+		
+		$parametros['laboratorio']  	= $laboratorios->laboratorio;
+		$parametros['idfacultad']  	    = $laboratorios->idfacultad;
+		$parametros['inactivo']  	    = $laboratorios->inactivo;
+		
+		//return 'entre al edit';
+		return view('laboratorios', compact('lab'))->with('parametros', $parametros)->with('laboratorios', $laboratorios);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request, $id)
+    {
+       // return 'entre al update';
+        $laboratorios = Laboratorios::find($id);
+		
+		if($request->input('inactivo') <> $laboratorios->inactivo){
+        	$laboratorios->inactivo      = $request->input('inactivo');
+        }else{
+			$laboratorios->laboratorio		= $request->input('laboratorio');
+			$laboratorios->idfacultad 		= $request->input('idfacultad');
+			$laboratorios->inactivo			= $request->input('inactivo');
+		}
+		
+		$laboratorios->save();
+		
+		return \Redirect::route('laboratorios.index');
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+        Laboratorios::destroy($id);
+		return \Redirect::route('laboratorios.index');
+    }
+}

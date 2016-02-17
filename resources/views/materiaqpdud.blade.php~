@@ -1,0 +1,163 @@
+@extends('app')
+	@section('content')
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="panel panel-default">
+						<div class="panel-heading strong">Registro de Materias que puede dar un Docente</div>
+							<div class="panel-body">
+								@if (count($errors) > 0)
+									<div class="alert alert-danger">
+										<strong>Whoops!</strong> There were some problems with your input.<br><br>
+										<ul>
+											@foreach ($errors->all() as $error)
+												<li>{{ $error }}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
+								@if(Auth::user()->idrol == 1 or Auth::user()->idrol == 5)
+									{!! Form::model($materiaqpdud, $parametros['ruta']) !!}
+										<div class="form-group">
+										<label class="col-md-4 control-label">MATERIA</label>
+											<div class="col-md-6">
+												{{--*/$mat = App\Materias::select('id',DB::raw('concat(codigomateria," ",materia) as nombrem'))->orderby('materia','asc')->lists('nombrem','id')/*--}}
+												{!! Form::select('idmateria', $mat, 1, array('class' => 'form-control','id' => 'idmateria')) !!}
+											</div>
+										</div>	
+										<br><br>
+										<div class="form-group">
+											<label class="col-md-4 control-label">PROFESOR</label>
+											<div class="col-md-6">
+												{{--*/$user = App\User::select('id',DB::raw('concat(cedula," ",nombre," ",apellido) as nombrec'))->where('idrol','<>',1)->orderby('nombre','asc')->lists('nombrec','id')/*--}}
+												{!! Form::select('iduser', $user, null, array('class' => 'form-control' )) !!}
+												{!! Form::hidden('inactivo', 1, array('class' => 'form-control')) !!}
+											</div>
+										</div>
+										<br><br>
+										<div class="form-group">
+											<div class="col-md-6 col-md-offset-4">
+												<button type="submit" class="btn btn-primary">REGISTRAR</button>
+											</div>
+										</div>
+									 {!!Form::close()!!}
+								@endif	
+							</div>
+							<br><br>
+							<!--inicio de la tabla -->
+							<div class="table-responsive">
+							<h4 class="text-center">Materias que puede dar un Docente</h4>	
+							{!! Form::open(['method' => 'GET','route' => 'materiaqpdud.index']) !!}
+								<div class="form-group bg-warning">
+								<br>
+								<div class="col-md-6">
+									<label class="col-md-8">{!! Form::text('users1', null, array('class' => 'form-control', 'placeholder' => 'Escriba el nombre')) !!}</label>
+										<button type="submit" class="btn btn-success">Buscar</button>		
+								</div>
+								<br><br><br>
+								</div>	
+							{!! Form::close() !!}
+								<table class="table2">
+									<tr class="strong text-center bg-info tr2"><td>NOMBRE</td><td>APELLIDO</td><td>CEDULA</td><td>MOSTRAR</td></tr>
+									@foreach($mxd as $user)
+										<tr class="text-center tr2">
+											@if($user->idrol == 1)
+											@else
+												<td>{{$user->nombre}}</td>
+												<td>{{$user->apellido}}</td>
+												<td>{{$user->cedula}}</td>	
+												<td><button data-toggle="modal" data-target="#showModal" class="btn btn-primary center-block mostrar" data-id="{{$user->id}}">MOSTRAR</button></td>
+											@endif
+										</tr>	
+									@endforeach	
+								</table>
+								<div class="text-center">
+									{!!str_replace('/?','?',$mxd->appends(Input::except('page'))->render())!!}
+								</div>
+							</div>
+							<!-----------------------fin de la tabla---------------------->	
+							@if(Auth::user()->idrol == 1 or Auth::user()->idrol == 5)	
+							<!-----------------------inicio de la tabla---------------------->	
+								<div class="container" id="menu_mater" style="display:none;">
+									<div class="row">
+										<div class="col-md-8 col-md-offset-1">
+											<div class="panel panel-default">
+												<div class="  panel-heading">EDITAR y ELIMINAR</div>		
+												<div class="panel-body ">
+													<h4 class="text-center">Lista de Profesores</h4>
+													{{--TABLA QUE AGRUPA A LOS ROLES ALMACENADOS PARA PODER EDITARLOS O ELIMINARLOS--}}
+													<div class="table-responsive">
+														<table class="table2">
+															<tr class="strong text-center bg-info tr2"><td>PROFESORES</td>
+																<td>MATERIAS</td>
+																<td>EDITAR</td>
+																	@if(Auth::user()->idrol == 1)
+																		<td>ELIMINAR</td>
+																	@endif
+															</tr>
+															@foreach(App\Materiaqpdud::all() as $materiaqpdud)
+																<tr class="text-center tr2">
+																	<td>{{$iduser = DB::table('users')->where('id', $materiaqpdud->iduser)->pluck('cedula')}} 
+																		{{$iduser = DB::table('users')->where('id', $materiaqpdud->iduser)->pluck('nombre')}} 
+																		{{$iduser = DB::table('users')->where('id', $materiaqpdud->iduser)->pluck('apellido')}}
+																	</td>
+																	<td>{{$idmateria = DB::table('materias')->where('id', $materiaqpdud->idmateria)->pluck('materia')}}</td>
+																	<td>{!! Form::open(['method' => 'GET','route' => ['materiaqpdud.edit', $materiaqpdud->id]]) !!}
+																		{!! Form::submit('Editar', ['class' => 'btn btn-success']) !!}
+																		{!! Form::close() !!}</td>
+																	@if(Auth::user()->idrol == 1)	
+																		<td>{!! Form::open(['method' => 'DELETE','route' => ['materiaqpdud.destroy', $materiaqpdud->id]]) !!}
+																		{!! Form::submit('Eliminar', ['class' => 'btn btn-danger']) !!}
+																		{!! Form::close() !!}</td>
+																	@endif	
+																</tr>	 
+															@endforeach
+														</table>
+													</div>	
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>	
+							<!--fin de la tabla-->	
+							@endif			
+							<!-----------------------inicio del modal box---------------------->			
+							<div class="modal fade" id="showModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+											<h3 class="modal-title" id="lineModalLabel">TABLA DE SOLICITUDES</h3>
+										</div>
+										<div class="modal-body">
+											{{--********************************************CONTENIDO DEL MODAL**********************************************--}}
+											{{-- <p class="invisible">{!!$p = 0 !!}{!!$e = 0 !!}{!!$c = 0 !!}</p>--}}
+												<div class="table-responsive">
+													{{--<h4 class="text-center strong">Solicitudes Pendientes</h4>--}}
+													<table class="table2 bg-dan-ger">
+														<thead>
+															<tr class=" bg-info tr2 strong text-center tr2"><td>MATERIA</td></tr>
+														</thead>	
+														<tbody id="bodytable">
+														</tbody>
+														<!-----------------------editar y eliminar---------------------->			
+
+														<!--------------------------------------------------------------->			
+
+													</table>
+													{{--<h4 class="text-center strong text-danger">Total de solicitudes pendientes: {{$p}}</h4>--}}
+													<br><br>
+												</div>
+												{{--*****************************************************************************************************************--}}
+
+												{{--footer del modal  por ahora no posee nada --}}
+										</div>
+										<div class="modal-footer">
+										</div>
+											{{--*******************************************--}}
+										</div>
+									</div>
+								</div>
+							</div>
+	<!-----------------------fin del modal---------------------->	
+	@endsection

@@ -1,0 +1,114 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Statuss as Statuss;
+class StatussController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        //
+        $statuss = new Statuss;
+        //$parametros['ruta'] 		= route('statuss.store');
+        $parametros['ruta'] 			= ['route' => 'statuss.store'];
+		$parametros['metodo'] 		= 'POST';
+		$parametros['estado'] 		=  '';
+		$parametros['icono'] 		=  '';
+		return view('statuss')->with('parametros', $parametros)->with('statuss', $statuss);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        //
+        $statuss = new Statuss;
+		$statuss->estado 					= $request->input('estado');
+		$statuss->icono 					= $request->input('icono');
+     
+ 		$statuss->save();
+      
+		return redirect()->back();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+           
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit(Request $request,$id)
+    {
+        //
+        $statuss = Statuss::find($id);
+		//$parametros['ruta'] 		 	= route('statuss.update', $id);
+		//$parametros['metodo'] 		 	= 'PATCH';
+		$parametros['ruta'] 		 	= ['route' => ['statuss.update', $id], 'method' => 'patch'];
+		$parametros['estado'] 		 	= $statuss->estado;
+		$parametros['icono'] 	 		= $statuss->icono;
+		return view('statuss')->with('parametros', $parametros)->with('statuss', $statuss);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request,$id)
+    {
+        //
+        $statuss = Statuss ::find($id);
+        $statuss->estado					= $request->input('estado');
+		//$statuss->icono 					= $request->input('icono');
+        return redirect()->back();
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+        Statuss::destroy($id);
+		return redirect()->back();
+    }
+}
